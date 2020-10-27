@@ -34,8 +34,10 @@ export default (namespace: string) => (WrappedPage: NextPage<any>) => {
     if (typeof ctx.query.lang !== 'string' || !isLocale(ctx.query.lang)) {
       return { ...pageProps }
     }
-    const url = process.env.NODE_ENV === 'production' ? process.env.PORT : 'http://localhost:3000'
-    const translations = await fetch(`${url}/api/${ctx.query.lang}?namespace=${namespace}`).then(data => data.json())
+    // const url = process.env.NODE_ENV === 'production' ? process.env.PORT : 'http://localhost:3000'
+    const host = ctx.req.headers.host;
+    const protocol = ctx.req.headers.referer && ctx.req.headers.referer.split(':')[0];
+    const translations = await fetch(`${protocol}://${host}/api/${ctx.query.lang}?namespace=${namespace}`).then(data => data.json())
     return { ...pageProps, locale: ctx.query.lang, translations }
   }
 
